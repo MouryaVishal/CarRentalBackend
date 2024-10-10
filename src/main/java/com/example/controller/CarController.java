@@ -14,6 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class CarController {
     @Autowired
     private CarService carService;
+
+    //Get all Cars
+    @GetMapping("/allcars")
+    public ResponseEntity<Iterable<Car>> allCar(){
+        Iterable<Car> cars=carService.allcars();
+        return ResponseEntity.ok(cars);
+    }
+
     //    view cars as per category
     @GetMapping("/category/{category}")
     public ResponseEntity<Iterable<Car>> allCar(@PathVariable String category){
@@ -27,4 +35,7 @@ public class CarController {
         Iterable<Car> cars=carService.searchByCarName(name);
         return ResponseEntity.ok(cars);
     }
+
+//    Rent a Car
+
 }

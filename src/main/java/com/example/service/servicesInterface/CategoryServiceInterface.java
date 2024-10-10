@@ -1,4 +1,4 @@
-package com.example.service.serviceInterface;
+package com.example.service.servicesInterface;
 
 import com.example.model.Category;
 

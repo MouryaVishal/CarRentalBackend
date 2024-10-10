@@ -18,7 +18,4 @@ public class Coupon {
 
     private String name;
     private Double discountValue;
-
-    //@ManyToMany(mappedBy = "coupon",cascade = CascadeType.ALL)
-    //private List<RentalOrder> rentalOrders;
 }

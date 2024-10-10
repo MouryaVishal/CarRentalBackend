@@ -3,7 +3,7 @@ package com.example.service;
 import com.example.exception.CategoryNotFoundException;
 import com.example.model.Category;
 import com.example.repo.CategoryRepository;
-import com.example.service.serviceInterface.CategoryServiceInterface;
+import com.example.service.servicesInterface.CategoryServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,7 @@ import java.util.Optional;
 
 
 @Service
-public class CategoryService {
+public class CategoryService implements CategoryServiceInterface {
     @Autowired
     private CategoryRepository categoryRepository;
     public Category addCategory(Category category){

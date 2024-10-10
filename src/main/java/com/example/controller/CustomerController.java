@@ -80,7 +80,4 @@ public class CustomerController {
         Iterable<Car> cars=carService.allcars();
         return ResponseEntity.ok(cars);
     }
-
-
-
 }

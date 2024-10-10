@@ -21,16 +21,16 @@ public class RentalOrder {
     private int rentalDays;
     private Double orderTotal;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="customer_id")
     private Customer customer;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "rental_order_id")
     private Car cars;
 
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 }
