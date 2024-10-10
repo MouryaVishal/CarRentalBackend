@@ -12,15 +12,17 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "category_table")
+@Table
 public class Category {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     private String categoryName;
 
-    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
-    private List<Car> cars;
+
+
+//    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL)
+//    private List<Car> cars;
 }

@@ -15,26 +15,22 @@ import java.util.List;
 @AllArgsConstructor
 public class RentalOrder {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private int rentalDays;
     private Double orderTotal;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name="customer_id")
-    @Autowired
     private Customer customer;
 
-    @ManyToMany
-    @JoinTable(
-            name = "rental_order_car",
-            joinColumns = @JoinColumn(name = "rental_order_id"),
-            inverseJoinColumns = @JoinColumn(name = "car_id")
-    )
-    private List<Car> cars;
+    @OneToOne
+    @JoinColumn(name = "rental_order_id")
+    private Car cars;
 
-    @ManyToOne
+
+    @OneToOne
     @JoinColumn(name = "coupon_id")
     private Coupon coupon;
 }

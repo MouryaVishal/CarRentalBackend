@@ -1,24 +1,23 @@
 package com.example.model;
 
-import jakarta.persistence.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Coupon {
+public class OrderHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    private String name;
-    private Double discountValue;
+    //Customer customer;
 
-    //@ManyToMany(mappedBy = "coupon",cascade = CascadeType.ALL)
-    //private List<RentalOrder> rentalOrders;
 }
