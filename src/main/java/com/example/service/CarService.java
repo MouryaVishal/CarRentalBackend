@@ -5,17 +5,21 @@ import com.example.exception.CategoryNotFoundException;
 import com.example.model.Car;
 import com.example.model.Category;
 import com.example.repo.CarRepository;
+import com.example.repo.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class CarService {
     @Autowired
     private CarRepository carRepository;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     public Car addCar(Car car){
         return carRepository.save(car);
@@ -48,4 +52,16 @@ public class CarService {
             throw new CarNotFoundException();
         }
     }
+
+    public Iterable<Car> allCarsByCategory( String categoryName){
+        List<Category> c = (List<Category>) categoryRepository.findByCategoryName(categoryName);
+        return carRepository.findByCategoryName(c.get(0).getId());
+    }
+
+
+    public List<Car> searchByCarName( String carName){
+        return (List<Car>) carRepository.findByName(carName);
+    }
+
+
 }

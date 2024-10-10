@@ -1,8 +1,10 @@
 package com.example.controller;
 
+import com.example.model.Car;
 import com.example.model.Coupon;
 import com.example.model.Customer;
 import com.example.model.RentalOrder;
+import com.example.service.CarService;
 import com.example.service.CustomerService;
 import com.example.service.RentalOrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,13 @@ public class CustomerController {
     @Autowired
     private RentalOrderService rentalOrderService;
 
+    @Autowired
+    private CarService carService;
+
 
 //    For customer
 
-    @PostMapping("/addcustomer")
+    @PostMapping("/registercustomer")
     public ResponseEntity<Customer> addCoupon(@RequestBody Customer customer){
         Customer newCategory=customerService.addCustomer(customer);
         return ResponseEntity.ok(newCategory);
@@ -68,4 +73,14 @@ public class CustomerController {
     public ResponseEntity<RentalOrder> updateRentalOrder(@PathVariable Long id,@RequestBody RentalOrder rentalOrder){
         return rentalOrderService.updateById(id,rentalOrder);
     }
+
+//    View All cars
+    @GetMapping("/allCars")
+    public ResponseEntity<Iterable<Car>> allCar(){
+        Iterable<Car> cars=carService.allcars();
+        return ResponseEntity.ok(cars);
+    }
+
+
+
 }

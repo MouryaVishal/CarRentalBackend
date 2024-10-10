@@ -13,7 +13,7 @@ import java.util.Optional;
 
 
 @Service
-public class CategoryService implements CategoryServiceInterface {
+public class CategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
     public Category addCategory(Category category){
@@ -43,4 +43,6 @@ public class CategoryService implements CategoryServiceInterface {
             throw new CategoryNotFoundException();
         }
     }
+
+
 }
