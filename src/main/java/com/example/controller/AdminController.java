@@ -47,7 +47,7 @@ public class AdminController {
     @PostMapping("/addcar")
     public ResponseEntity<Car> addCar(@RequestBody Car car){
         Car newCategory=carService.addCar(car);
-        return ResponseEntity.ok(car);
+        return ResponseEntity.ok(newCategory);
     }
 
     @GetMapping("/allcars")

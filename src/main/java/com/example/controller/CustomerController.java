@@ -1,9 +1,7 @@
 package com.example.controller;
 
-import com.example.model.Car;
-import com.example.model.Coupon;
-import com.example.model.Customer;
-import com.example.model.RentalOrder;
+import com.example.model.*;
+import com.example.request.RequsetRentalOrder;
 import com.example.service.CarService;
 import com.example.service.CustomerService;
 import com.example.service.RentalOrderService;
@@ -52,9 +50,8 @@ public class CustomerController {
 //    For RentralOrder;
 
     @PostMapping("/placeOrder")
-    public ResponseEntity<RentalOrder> placeOrder(@RequestBody RentalOrder rentalOrder){
-        RentalOrder newRentalOrder=rentalOrderService.placeRentalOrder(rentalOrder);
-        return ResponseEntity.ok(newRentalOrder);
+    public ResponseEntity<Object> placeOrder(@RequestBody RequsetRentalOrder requsetRentalOrder){
+        return rentalOrderService.placeRentalOrder(requsetRentalOrder);
     }
 
     @GetMapping("/allrentalorder")

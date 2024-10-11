@@ -21,16 +21,20 @@ public class RentalOrder {
     private int rentalDays;
     private Double orderTotal;
 
+//    (targetEntity=Customer.class,cascade={CascadeType.MERGE})
+//    @JoinTable(name = "order_customer", joinColumns = {@JoinColumn(name = "order_id")},
+//            inverseJoinColumns = {})
     @ManyToOne
-    @JoinColumn(name="customer_id")
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
     @ManyToOne
-    @JoinColumn(name = "rental_order_id")
+    @JoinColumn(name = "car_id")
     private Car cars;
 
 
-    @ManyToOne
-    @JoinColumn(name = "coupon_id")
-    private Coupon coupon;
+    @ManyToMany(targetEntity=Coupon.class,cascade={CascadeType.MERGE})
+    @JoinTable(name = "order_coupon", joinColumns = {@JoinColumn(name = "order_id")},
+            inverseJoinColumns = {@JoinColumn(name = "coupon_id")})
+    private List<Coupon> coupon;
 }
