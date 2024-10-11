@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/car")
 public class CarController {
@@ -31,8 +33,8 @@ public class CarController {
 
     //search a specific car
     @GetMapping("/{name}")
-    public ResponseEntity<Iterable<Car>> searchByCarName(@PathVariable String name){
-        Iterable<Car> cars=carService.searchByCarName(name);
+    public ResponseEntity<Optional<Car>> searchByCarName(@PathVariable String name){
+        Optional<Car> cars=carService.searchByCarName(name);
         return ResponseEntity.ok(cars);
     }
 

@@ -59,8 +59,8 @@ public class CarService {
     }
 
 
-    public List<Car> searchByCarName( String carName){
-        return (List<Car>) carRepository.findByName(carName);
+    public Optional<Car> searchByCarName( String carName){
+        return (Optional<Car>) carRepository.findByName(carName);
     }
 
 

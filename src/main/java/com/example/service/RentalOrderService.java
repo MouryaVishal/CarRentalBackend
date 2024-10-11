@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -40,62 +41,72 @@ public class RentalOrderService {
         int noOfDaysForRent=request.getNoOfDaysForRent();
         String carCategoryName=request.getCarCategoryName();
 
-        Optional<Customer> findCustomer=customerRepository.findByName(customerName);
-
         // Fetch customer
-        long customerId = request.getCustomer().getId();
-        Optional<Customer> customer = customerRepository.findById(customerId);
-
-        if(customer.isEmpty()) {
+        System.out.println("customer");
+        Optional<Customer> currCustomer=customerRepository.findByName(customerName);
+        if(currCustomer.isEmpty()){
             return new ResponseEntity<>("Sorry! Customer not found...",HttpStatus.NOT_FOUND);
         }
-        long carId = request.getCars().getId();
-        Optional<Car> car = carRepository.findById(carId);
-        System.out.println("temp "+car);
-        if(car.isPresent() && !car.get().getIsAvailable()){
-            return new ResponseEntity<>("Sorry! car is used by other customer...",HttpStatus.NOT_FOUND);
-        }
+
+        System.out.println("car");
+        Optional<Car> car = carRepository.findByName(carName);
         if(car.isEmpty()){
             return new ResponseEntity<>("temp,Sorry! car not found...",HttpStatus.NOT_FOUND);
         }
-        List<Coupon> coupons = request.getCoupon();
-        for(Coupon c:coupons){
-            if(!request.getCustomer().getFistTime() && Objects.equals(c.getName(), "FIRSTTIME")){
-                coupons.remove(c);
-                continue;
+        if(!car.get().getIsAvailable()){
+            return new ResponseEntity<>("Sorry! car is used by other customer...",HttpStatus.NOT_FOUND);
+        }
+        if(!Objects.equals(car.get().getCategoryId().getCategoryName(), carCategoryName)){
+            return new ResponseEntity<>("Sorry! "+carName+" with "+carCategoryName+" category is not present...",HttpStatus.NOT_FOUND);
+        }
+
+        List<Coupon> coupons = new ArrayList<>();
+        for(String couponName:couponNames){
+            System.out.println("Coupon");
+
+            Optional<Coupon> coupon=couponRepository.findByName(couponName);
+            if(coupon.isEmpty()){
+                return new ResponseEntity<>("Sorry! "+couponName +"  is not provide by company...",HttpStatus.NOT_FOUND);
             }
-            Long couponId=c.getId();
-            Coupon coupon=couponRepository.findById(couponId)
-                    .orElseThrow(() -> new CouponNotFoundException());
+            coupon.ifPresent(coupons::add);
         }
 
         // Validate rental days
-        if (request.getRentalDays() <= 0 || request.getRentalDays() > 30) {
+        if (noOfDaysForRent <= 0 || noOfDaysForRent > 30) {
             return new ResponseEntity<>("Sorry! Rental Days can not be less then 0 and more the 30..."
                     ,HttpStatus.NOT_FOUND);
         }
 
         // Calculate total cost
-        double totalCost = car.get().getPricePerDay() * request.getRentalDays();
+        double totalCost = car.get().getPricePerDay() * noOfDaysForRent;
 
-        // Check if coupon is provided and apply ii
-        totalCost = applyCouponDiscount(totalCost, coupons, request.getRentalDays());
-
+        if(currCustomer.get().getFistTime()){
+            totalCost/=2D;
+        }else{
+            Double discountAmountAfterCouponApply = applyCouponDiscount(totalCost, coupons, noOfDaysForRent);
+            totalCost-=discountAmountAfterCouponApply;
+        }
         RentalOrder rentalOrder = new RentalOrder();
         car.get().setIsAvailable(false);
-        customer.get().setFistTime(false);
-        rentalOrder.setCustomer(customer.get());
-        rentalOrder.setCars(car.get());
-        rentalOrder.setRentalDays(request.getRentalDays());
+        currCustomer.get().setFistTime(false);
         rentalOrder.setOrderTotal(totalCost);
-        rentalOrder.setCoupon(request.getCoupon());
-
+        rentalOrder.setCustomer(currCustomer.get());
+        rentalOrder.setCars(car.get());
+        rentalOrder.setRentalDays(noOfDaysForRent);
+        rentalOrder.setCoupon(coupons);
         rentalOrderRepository.save(rentalOrder);
         return new ResponseEntity<>(rentalOrder,HttpStatus.OK);
     }
     private double applyCouponDiscount(double totalCost, List<Coupon> coupons, int rentalDays) {
         System.out.println(coupons);
         double discount = 0;
+        if (rentalDays >= 5 && rentalDays < 10) {
+            discount =Math.max(discount,totalCost * 0.1);
+        } else if (rentalDays >= 10 && rentalDays < 30) {
+            discount =Math.max(discount,totalCost * 0.2);
+        } else if (rentalDays == 30) {
+            discount =Math.max(discount,totalCost * 0.3);
+        }
         for (Coupon coupon : coupons){
             Optional<Coupon> currCoupon=couponRepository.findById(coupon.getId());
             String couponName="";
@@ -103,37 +114,16 @@ public class RentalOrderService {
                 couponName=currCoupon.get().getName();
             }
             System.out.println(currCoupon);
-            switch (couponName) {
-                case "FIRSTTIME":
-                    discount = totalCost * 0.5;
-                    break;
-                case "Coupon10":
-                    discount = totalCost * coupon.getDiscountValue() / 100;
-                    break;
-                case "Coupon30":
-                    discount = totalCost * coupon.getDiscountValue() / 100;
-                    break;
-                case "Coupon20":
-                    discount = totalCost * coupon.getDiscountValue() / 100;
-                    break;
-                case "Coupon50":
-                    discount = totalCost * coupon.getDiscountValue() / 100;
-                    break;
-                case "CouponByDays":
-                    if (rentalDays >= 5 && rentalDays < 10) {
-                        discount = totalCost * 0.1;
-                    } else if (rentalDays >= 10 && rentalDays < 30) {
-                        discount = totalCost * 0.2;
-                    } else if (rentalDays == 30) {
-                        discount = totalCost * 0.3;
-                    }
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid coupon type");
-            }
+            discount = switch (couponName) {
+                case "Coupon10" -> Math.max(discount, totalCost * coupon.getDiscountValue() / 100);
+                case "Coupon30" -> Math.max(discount, totalCost * coupon.getDiscountValue() / 100);
+                case "Coupon20" -> Math.max(discount, totalCost * coupon.getDiscountValue() / 100);
+                case "Coupon50" -> Math.max(discount, totalCost * coupon.getDiscountValue() / 100);
+                default -> discount;
+            };
         }
 
-        return totalCost - discount;
+        return discount;
     }
 
 

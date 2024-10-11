@@ -5,8 +5,10 @@ import com.example.model.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.Optional;
+
 public interface CarRepository extends JpaRepository<Car,Long> {
     @Query(value = "SELECT c.* FROM car c JOIN category cat ON c.category_id = cat.id WHERE cat.id = :id", nativeQuery = true)
     Iterable<Car> findByCategoryName(Long id);
-    Iterable<Car> findByName(String carName);
+    Optional<Car> findByName(String carName);
 }
