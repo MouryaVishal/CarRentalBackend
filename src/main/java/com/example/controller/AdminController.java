@@ -3,6 +3,7 @@ package com.example.controller;
 import com.example.model.Car;
 import com.example.model.Category;
 import com.example.model.Coupon;
+import com.example.request.CouponResquestToAdd;
 import com.example.service.CarService;
 import com.example.service.CategoryService;
 import com.example.service.CouponService;
@@ -11,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("admin")
 public class AdminController {
     @Autowired
     private CarService carService;
@@ -69,9 +71,9 @@ public class AdminController {
    // Coupon RestApi
 
     @PostMapping("/addcoupon")
-    public ResponseEntity<Coupon> addCoupon(@RequestBody Coupon coupon){
-        Coupon newCategory=couponService.addCoupon(coupon);
-        return ResponseEntity.ok(coupon);
+    public ResponseEntity<Object> addCoupon(@RequestBody CouponResquestToAdd coupon){
+        ResponseEntity<Object> newCategory=couponService.addCoupon(coupon);
+        return ResponseEntity.ok(newCategory);
     }
 
     @GetMapping("/allcoupon")
@@ -86,7 +88,7 @@ public class AdminController {
         return ResponseEntity.ok(responseStr);
     }
     @PutMapping("/updatecoupon/{id}")
-    public ResponseEntity<Coupon> updateCar(@PathVariable Long id,@RequestBody Coupon coupon){
+    public ResponseEntity<Coupon> updateCar(@PathVariable Long id,@RequestBody CouponResquestToAdd coupon){
         return couponService.updateById(id,coupon);
     }
 }

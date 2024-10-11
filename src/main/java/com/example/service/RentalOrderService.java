@@ -42,7 +42,6 @@ public class RentalOrderService {
         String carCategoryName=request.getCarCategoryName();
 
         // Fetch customer
-        System.out.println("customer");
         Optional<Customer> currCustomer=customerRepository.findByName(customerName);
         if(currCustomer.isEmpty()){
             return new ResponseEntity<>("Sorry! Customer not found...",HttpStatus.NOT_FOUND);

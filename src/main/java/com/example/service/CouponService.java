@@ -10,6 +10,7 @@ import com.example.model.RentalOrder;
 import com.example.repo.CategoryRepository;
 import com.example.repo.CouponRepository;
 import com.example.repo.CustomerRepository;
+import com.example.request.CouponResquestToAdd;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,8 +30,16 @@ public class CouponService {
     @Autowired
     private CustomerRepository customerRepository;
 
-    public Coupon addCoupon(Coupon coupon){
-        return couponRepository.save(coupon);
+    public ResponseEntity<Object> addCoupon(CouponResquestToAdd coupon){
+        Optional<Coupon> isCouponPresent=couponRepository.findByName(coupon.getCouponName());
+        if(isCouponPresent.isPresent()){
+            return  new ResponseEntity<>("Sorry! Coupon with name:"+coupon.getCouponName()+" already present!!",HttpStatus.NOT_FOUND);
+        }
+        Coupon addedCoupon=new Coupon();
+        addedCoupon.setName(coupon.getCouponName());
+        addedCoupon.setDiscountValue(coupon.getDiscountAmount());
+        couponRepository.save(addedCoupon);
+        return new ResponseEntity<>(addedCoupon,HttpStatus.OK);
     }
 
     public Iterable<Coupon> allCoupon(){
@@ -45,12 +54,12 @@ public class CouponService {
         return "Delete Fail. No Such id found!!";
     }
 
-    public ResponseEntity<Coupon> updateById(Long id, Coupon coupon) {
-        Optional<Coupon> optionalCategory = couponRepository.findById(id);
-        if (optionalCategory.isPresent()) {
-//            Category category = optionalCategory.get();
-//            category.setCategoryName(categoryDetails.getCategoryName());
-            Coupon updatedCat = couponRepository.save(coupon);
+    public ResponseEntity<Coupon> updateById(Long id, CouponResquestToAdd coupon) {
+        Optional<Coupon> updateCoupon = couponRepository.findById(id);
+        if (updateCoupon.isPresent()) {
+            updateCoupon.get().setName(coupon.getCouponName());
+            updateCoupon.get().setDiscountValue(coupon.getDiscountAmount());
+            Coupon updatedCat = couponRepository.save(updateCoupon.get());
             return new ResponseEntity<Coupon>(updatedCat, HttpStatus.OK);
         } else {
             throw new CouponNotFoundException();
@@ -61,7 +70,6 @@ public class CouponService {
         List<Coupon> coupons = new ArrayList<>();
         if(days>50)return coupons;
         Optional<Customer> customer = customerRepository.findById(id);
-//        System.out.println("wq");
         if(customer.isEmpty()){
             Coupon co=new Coupon();
             co.setName("FIRSTTIME");

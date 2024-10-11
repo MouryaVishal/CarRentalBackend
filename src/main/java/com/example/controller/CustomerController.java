@@ -1,6 +1,7 @@
 package com.example.controller;
 
 import com.example.model.*;
+import com.example.request.CustomerResquestToRegister;
 import com.example.request.RequsetRentalOrder;
 import com.example.service.CarService;
 import com.example.service.CustomerService;
@@ -25,9 +26,8 @@ public class CustomerController {
 //    For customer
 
     @PostMapping("/registercustomer")
-    public ResponseEntity<Customer> addCoupon(@RequestBody Customer customer){
-        Customer newCategory=customerService.addCustomer(customer);
-        return ResponseEntity.ok(newCategory);
+    public ResponseEntity<Object> addCoupon(@RequestBody CustomerResquestToRegister customer){
+        return customerService.addCustomer(customer);
     }
 
     @GetMapping("/allcustomer")
@@ -42,7 +42,7 @@ public class CustomerController {
         return ResponseEntity.ok(responseStr);
     }
     @PutMapping("/updatecustomer/{id}")
-    public ResponseEntity<Customer> updateCar(@PathVariable Long id,@RequestBody Customer customer){
+    public ResponseEntity<Object> updateCar(@PathVariable Long id,@RequestBody CustomerResquestToRegister customer){
         return customerService.updateById(id,customer);
     }
 
